@@ -4,12 +4,10 @@
 #
 # Git: https://github.com/ANXS/postgresql
 #
+# ansible-playbook -i "localhost" playbooks/postgres-sample.yml
+# Sample playbook:
 #
 #
-
-
-Sample playbook:
-
 
 ---
 - name: Apply postgres server

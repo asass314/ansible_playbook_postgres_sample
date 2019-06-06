@@ -1,0 +1,58 @@
+#
+#
+# Generische ***Postgresql Ansible Role***
+#
+# Git: https://github.com/ANXS/postgresql
+#
+#
+#
+
+
+Sample playbook:
+
+
+---
+- name: Apply postgres server
+  hosts: localhost
+  remote_user: root
+  become: yes
+
+  vars:
+    postgresql_version: 11
+    #postgresql.conf
+    postgresql_listen_addresses:
+      - '0.0.0.0'
+    postgresql_users:
+      - name: admin
+        #pass: "{{ postgres_admin_password }}"
+        pass: admin
+        encrypted: yes
+    postgresql_database_schemas:
+      - database: mydatabase
+        state: present
+        schema: admin
+        owner: admin
+    postgresql_databases:
+     - name: mydatabase
+       owner: admin
+    #Set access to database with pg_hba.conf
+    postgresql_pg_hba_default:
+      - { type: local, database: all, user: all, address: "", method: "{{ postgresql_default_auth_method }}", comment: '"local"  Unix domain socket connections' }
+      - { type: host,  database: all, user: all, address: "172.20.0.0/16", method: "{{ postgresql_default_auth_method_hosts }}", comment: "IPv4 local connections:" }
+      - { type: host,  database: all, user: all, address: "::1/128", method: "{{ postgresql_default_auth_method_hosts }}", comment: "IPv6 local connections:" }
+      #- { type: local, database: all, user: "{{ postgresql_admin_user }}", address: "", method: "peer map=root_as_{{ postgresql_admin_user }}", comment: "Local root Unix user, passwordless access" }
+
+  tasks:
+  - name: open port for postgres
+    firewalld:
+      port: 5432/tcp
+      permanent: true
+      state: enabled
+
+  - name: reload firewald
+    service:
+      name: firewalld
+      state: reloaded
+
+  roles:
+   - postgresql

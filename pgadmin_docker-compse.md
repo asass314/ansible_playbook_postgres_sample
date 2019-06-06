@@ -26,6 +26,7 @@ services:
        - PGADMIN_DEFAULT_EMAIL=admin@domain.com
        - PGADMIN_DEFAULT_PASSWORD=admin123
        - PGADMIN_ENABLE_TLS=True
+     network_mode: host
 ```
 
 docker-compose up -d
